@@ -14,6 +14,7 @@ class BugReport extends Model
         'description',
         'status',
         'priority',
-        'reporter',
+        'reporter', // Bisa tetap dipakai jika tidak menggunakan foreign key
+        'user_id',  // Tambahkan jika ingin relasi dengan user
     ];
 }
