@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\BugReportController;
+use App\Http\Controllers\DeveloperBugReportController;
 use App\Http\Middleware\RoleMiddleware;
 
 Route::get('/', function () {
@@ -26,20 +27,19 @@ Route::post('/logout', function (Request $request) {
 })->name('logout');
 
 // Route yang butuh autentikasi dan role-based access control
-// Contoh untuk bug_tester
+// Untuk bug_tester
 Route::middleware(['auth', RoleMiddleware::class . ':bug_tester'])->group(function () {
-    Route::get('/bug-tester/dashboard', [BugReportController::class, 'testerDashboard']);
-    // Tambahkan route lain yang hanya boleh diakses bug_tester di sini
-});
+    Route::get('/bug-tester/dashboard', [BugReportController::class, 'testerDashboard'])->name('bug_tester.dashboard');
 
-// Contoh untuk developer
-Route::middleware(['auth', RoleMiddleware::class . ':developer'])->group(function () {
-    Route::get('/developer/dashboard', [BugReportController::class, 'developerDashboard']);
-    // Tambahkan route lain yang hanya boleh diakses developer di sini
-});
-
-// Contoh untuk bug_tester dan developer bisa akses bersama
-Route::middleware(['auth', RoleMiddleware::class . ':bug_tester,developer'])->group(function () {
+    // Resource bug reports khusus bug_tester
     Route::resource('bug-reports', BugReportController::class)->except(['showLoginForm', 'login']);
-    // Route ini menggantikan route resource bug-reports yang sebelumnya hanya dilindungi auth
+});
+
+// Untuk developer dengan controller khusus DeveloperBugReportController
+Route::middleware(['auth', RoleMiddleware::class . ':developer'])->prefix('developer')->name('developer.')->group(function () {
+    Route::get('/dashboard', [DeveloperBugReportController::class, 'index'])->name('dashboard');
+
+    // Resource bug reports untuk developer, route resource dengan prefix & nama route yang sesuai
+    Route::resource('bug-reports', DeveloperBugReportController::class)
+        ->only(['index', 'show', 'edit', 'update']);
 });
