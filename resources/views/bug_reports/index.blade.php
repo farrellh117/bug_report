@@ -3,7 +3,11 @@
 @section('content')
 <div class="container">
     <h1>Bug Reports</h1>
-    <a href="{{ route('bug-reports.create') }}" class="btn btn-primary mb-3">Create New Bug Report</a>
+
+    {{-- Tampilkan tombol Create hanya untuk bug tester --}}
+    @if(auth()->user()->isBugTester())
+        <a href="{{ route('bug_tester.bug-reports.create') }}" class="btn btn-primary mb-3">Create New Bug Report</a>
+    @endif
 
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
@@ -24,18 +28,22 @@
             <tbody>
                 @foreach($bugReports as $bug)
                 <tr>
-                    <td><a href="{{ route('bug-reports.show', $bug) }}">{{ $bug->title }}</a></td>
+                    <td><a href="{{ route('bug_tester.bug-reports.show', $bug) }}">{{ $bug->title }}</a></td>
                     <td>{{ $bug->reporter }}</td>
                     <td>{{ ucfirst($bug->priority) }}</td>
                     <td>{{ ucfirst(str_replace('_', ' ', $bug->status)) }}</td>
                     <td>{{ $bug->created_at->format('Y-m-d') }}</td>
                     <td>
-                        <a href="{{ route('bug-reports.edit', $bug) }}" class="btn btn-sm btn-warning">Edit</a>
-                        <form action="{{ route('bug-reports.destroy', $bug) }}" method="POST" style="display:inline-block;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
-                        </form>
+                        @if(auth()->user()->isBugTester())
+                            <a href="{{ route('bug_tester.bug-reports.edit', $bug) }}" class="btn btn-sm btn-warning">Edit</a>
+                            <form action="{{ route('bug_tester.bug-reports.destroy', $bug) }}" method="POST" style="display:inline-block;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
+                            </form>
+                        @elseif(auth()->user()->isDeveloper())
+                            {{-- Jika developer hanya lihat tanpa aksi, kosongkan --}}
+                        @endif
                     </td>
                 </tr>
                 @endforeach

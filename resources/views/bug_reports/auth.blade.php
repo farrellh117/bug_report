@@ -1,15 +1,28 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Login</title>
-    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+    <meta charset="UTF-8">
+    <title>Login - Bug Report App</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
+    {{-- Navbar --}}
+    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url('/') }}">Bug Report</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            {{-- Navbar konten bisa kamu sesuaikan --}}
+        </div>
+    </nav>
+
+    {{-- Konten utama form login --}}
     <div class="container mt-5" style="max-width: 400px;">
         <h2>Login</h2>
 
+        {{-- Tampilkan error validation jika ada --}}
         @if ($errors->any())
             <div class="alert alert-danger">
                 <ul class="mb-0">
@@ -22,6 +35,7 @@
 
         <form method="POST" action="{{ route('login') }}">
             @csrf
+
             <div class="mb-3">
                 <label for="email" class="form-label">Email address</label>
                 <input 
@@ -30,6 +44,7 @@
                     id="email" 
                     name="email" 
                     value="{{ old('email') }}" 
+                    placeholder="Enter your email" 
                     required 
                     autofocus
                 >
@@ -45,6 +60,7 @@
                     class="form-control @error('password') is-invalid @enderror" 
                     id="password" 
                     name="password" 
+                    placeholder="Enter your password" 
                     required
                 >
                 @error('password')
@@ -64,5 +80,8 @@
             <p>Don't have an account? <a href="{{ route('register') }}">Register here</a>.</p>
         </div>
     </div>
+
+    {{-- Bootstrap JS (optional, for navbar toggler) --}}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
